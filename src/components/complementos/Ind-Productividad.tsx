@@ -55,9 +55,10 @@ export const IndProductividad = () => {
         FecFin: fechaFinal
       },
     },
+    fetchPolicy: 'no-cache', 
   });
 
-  //console.log("DATA PRODUCTIVIDAD", data)
+
   if (loading) return <SqueletonIndiceProductividad/>;
   if (error) return <p>Error: {error.message}</p>;
 

@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_CURRENT_ACTIVITIES = gql`
-  query GetCurrentActivities($pagination: Pagination) {
-    getCurrentActivities(pagination: $pagination) {
+  query GetCurrentActivities($where: ActivityViewWhere, $pagination: Pagination) {
+    getCurrentActivities(where: $where, pagination: $pagination) {
       id
       bitCode
       activityCode

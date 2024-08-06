@@ -51,6 +51,7 @@ const TopItem: React.FC<TopItemProps> = ({index,  rankingData }) => (
     <div className="flex">
   
     <div className="ml-10 mt-16">
+     
           <div className={`h-32 w-32 mt-4 rounded-full flex items-center justify-center text-20 font-trebuchet font-bold
             ${index === 0 ? 'border-2 border-orange4 bg-orange4 text-orange1' : ''}
             ${index === 1 ? 'border-2 border-blue6 bg-blue6 text-blue1' : ''}
@@ -130,6 +131,8 @@ const RankingComponent: React.FC = () => {
 
 );
   if (error) return <p>Error: {error.message}</p>;
+
+  
 
   return (
     <div>

@@ -11,16 +11,20 @@ import { ActivityView } from "../../../_generated_/graphql";
 import { IconGRL } from "../../../svg/grilla/producto/cs3Icon";
 import { IconSWT } from "../../../svg/grilla/producto/IconSWT";
 import { IconSAC } from "../../../svg/grilla/producto/IconSAC";
+import { EnProceso } from "../../../svg/grilla/estado/enProceso";
+import { EnEspera } from "../../../svg/grilla/estado/enEspera";
+import { Resuelto } from "../../../svg/grilla/estado/resuelto";
+import { Vencido } from "../../../svg/grilla/estado/vencido";
+import { Devuelto } from "../../../svg/grilla/estado/devuelto";
 //import { ButtonActivity } from "./buttomActivity";
 
 type Maybe<T> = T | null | undefined;
 type IconPrefix = 'SWT' | 'SAC' | 'GRL'
 
 const iconMap: Record<IconPrefix, JSX.Element> = {
-  SWT: <IconSWT />,  // Reemplaza con tu icono correspondiente
+  SWT: <IconSWT />, 
   SAC: <IconSAC />,
   GRL: <IconGRL />,
-  // Agrega más combinaciones según sea necesario
 };
 
 const getIconByPrefix = (value: string): JSX.Element => {
@@ -29,16 +33,26 @@ const getIconByPrefix = (value: string): JSX.Element => {
   return iconMap[prefix] || <IconGRL />; // Icono por defecto si no coincide
 };
 
+const extractDescription = (priority: string) => {
+  const parts = priority.split('. ');
+  return parts.length > 1 ? parts[1] : priority;
+};
+
+type Priority = "1. ALTO" | "2. MEDIO" | "3. BAJO";
+
 const columnHelper = createColumnHelper<ActivityView>();
 
 export const Columns = [
-  columnHelper.accessor("activityCode", {
+  columnHelper.accessor("assignedDate", {
     header: () => "", // Esto indica que no habrá encabezado visible para esta columna
-    cell: () => (
+    cell: (/*info*/) => {
+      //const value = info.getValue() || "";
+      return (
       <div className="">
         <MenuIcon />
       </div>
-    ),
+      )
+  },
   }),
 
   columnHelper.accessor("bitTicket", {
@@ -51,9 +65,9 @@ export const Columns = [
       const value = info.getValue() || "";
   
       return (
-        <div className="flex items-center font-verdana font-bold text-12">
+        <div className=" -ml-21 flex items-center font-verdana font-bold text-12">
           <div className="flex-shrink-0">
-            {getIconByPrefix(value)} {/* Renderiza el icono correspondiente */}
+            {getIconByPrefix(value)} 
           </div>
           <span className="ml-2 whitespace-nowrap">{value}</span>
         </div>
@@ -71,7 +85,7 @@ export const Columns = [
     ),
     cell: (info) => {
       const client = info.getValue();
-      return <div className=" font-verdana font-bold text-12">{client}</div>;
+      return <div className=" -ml-19 font-verdana font-bold text-12">{client}</div>;
     },
   }),
 
@@ -86,7 +100,7 @@ export const Columns = [
     cell: (info) => {
       const subject = info.getValue();
       return (
-        <div className="flex  font-verdana font-bold text-12 ">{subject}</div>
+        <div className="-ml-5 flex  font-verdana font-bold text-12 ">{subject}</div>
       );
     },
   }),
@@ -140,29 +154,33 @@ export const Columns = [
       const estado: Maybe<string> = info.getValue();
 
       const estadoText = estado ?? "No definido";
-
-      let bgColorClass = "bg-cyan4";
-      let textColorClass = "text-cyan2";
-
-      if (estadoText === "EN PROCESO") {
-        bgColorClass = "bg-yellow-400";
-        textColorClass = "text-yellow-800";
-      } else if (estadoText === "COMPLETADO") {
-        bgColorClass = "bg-green-400";
-        textColorClass = "text-green-800";
+      let EstadoIcon;
+  
+      switch (estadoText) {
+        case "EN.EJECUCION":
+          EstadoIcon = <EnProceso />;
+          break;
+        case "EN.ESPERA":
+          EstadoIcon = <EnEspera />;
+          break;
+        case "RESUELTA":
+          EstadoIcon = <Resuelto />;
+          break;
+        case "BORRADOR":
+          EstadoIcon = <Vencido />;
+          break;
+        case "DEVUELTA":
+          EstadoIcon = <Devuelto />;
+          break;
+        default:
+          EstadoIcon = null;
       }
-
-      const containerWidth = estadoText.length * 10;
-
       return (
         <>
           <div className=" flex  justify-start">
-            <div
-              className={`flex font-worksansM  items-center mt-2  w-77 h-28 rounded ${bgColorClass} `}
-              style={{ width: `${containerWidth}px` }}
-            >
-              <div className={`ml-10 -mt-3  text-12  ${textColorClass}`}>
-                {estadoText}
+            <div className=" w-77 ">
+              <div className=" -ml-7 -mt-3  ">
+                {EstadoIcon}
               </div>
             </div>
           </div>
@@ -180,30 +198,33 @@ export const Columns = [
       </>
     ),
     cell: (info) => {
-      const priority = info.getValue();
-
-      if (priority === "2. MEDIO")
-        return (
-          <div className="flex -ml-12.25 font-verdana  text-12">
-            <p>{priority}</p>
-            <StatusMediumIcon />
-          </div>
-        );
-
-      if (priority === "1. ALTO")
-        return (
-          <div className="flex -ml-12.25 font-verdana  text-12">
-            <p>{priority}</p>
-            <StatusHighIcon />
-          </div>
-        );
-      else if (priority === "3. BAJO")
-        return (
-          <div className="flex -ml-12.25 font-verdana  text-12">
-            <p>{priority}</p>
-            <StatusLowIcon />
-          </div>
-        );
+      const priority = info.getValue();  
+      const description = extractDescription(priority as Priority);
+  
+        if (priority === "2. MEDIO")
+          return (
+            <div className="flex -ml-12.25 font-verdana text-12">
+              <p>{description}</p>
+              <StatusMediumIcon />
+            </div>
+          );
+  
+        if (priority === "1. ALTO")
+          return (
+            <div className="flex -ml-12.25 font-verdana text-12">
+              <p>{description}</p>
+              <StatusHighIcon />
+            </div>
+          );
+  
+          else if (priority === "3. BAJO")
+            return (
+              <div className="flex -ml-12.25 font-verdana  text-12">
+                <p>{description}</p>
+                <StatusLowIcon />
+              </div>
+            );
+      }
     },
-  }),
+  )
 ];

@@ -7,7 +7,7 @@ export const BienvenidoSqueleton = () => {
 
         <div className=" flex  ">
           <div className="  ">
-            <Skeleton width={600} height={50} borderRadius={5}/>
+            <Skeleton width={460} height={50} borderRadius={5}/>
           </div>
         </div>
 

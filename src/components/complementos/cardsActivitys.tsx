@@ -24,6 +24,7 @@ export const CardsActivitys = () => {
         },
       });
 
+      //console.log("DATA DE CARDS", data)
       
   if (loading) return <CardsActivitysSqueleton/>;
   if (error) return <p>Error: {error.message}</p>;

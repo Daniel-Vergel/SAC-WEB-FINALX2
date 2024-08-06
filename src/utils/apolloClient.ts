@@ -1,6 +1,7 @@
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { SIGNIN_MUTATION } from "../gql/SIGNIN_MUTATION";
+import { SIGNIN_USERKEY } from "../gql/mutation/SIGNIN_USERKEY";
 
 const httpLink = createHttpLink({
     uri: import.meta.env.VITE_APOLLOURI, // Solo especifica el URI una vez aquí
@@ -21,9 +22,9 @@ async function AuthUser(){
 
   const token =  await client 
       .mutate({
-        mutation: SIGNIN_MUTATION,
+        mutation: SIGNIN_USERKEY,
         variables: {
-          signinInput,
+          usarApiKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IkRWZXJnZWwiLCJlbWFpbCI6ImR2ZXJnZWxAY29tZXJjaWFsaXphZG9yYS1zMy5jb20iLCJyb2xlIjoiVXN1YXJpbyIsIm5iZiI6MTY5OTYzODExNCwiZXhwIjoxNzAyMjMwMTE0LCJpYXQiOjE2OTk2MzgxMTR9.CaidxSkrVnVliPIUBv60HwIE9v_xWrWa156Y1_HOLIS",
         },
       })
     

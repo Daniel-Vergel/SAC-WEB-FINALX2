@@ -6,6 +6,7 @@ export const GET_EMPLOYEE = gql`query Employee($employeeInput: EmployeeInput!) {
       stopwatchDate
       stopwatchChanged
       producto
+      PerDataAct
       
     }
   }

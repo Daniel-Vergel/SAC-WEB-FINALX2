@@ -26,8 +26,12 @@ export const PaginationSlice = createSlice({
         state.currentPage = state.currentPage - 10;
       }
     },
+
+    setCurrentPage: (state) => {
+      state.currentPage = state.currentPage = 1
+    }
   },
 });
 
-export const { nextPage, prevPage, nextPageX10, prevPagex10 } =
+export const { nextPage, prevPage, nextPageX10, prevPagex10, setCurrentPage} =
   PaginationSlice.actions;

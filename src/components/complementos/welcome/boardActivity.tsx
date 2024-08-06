@@ -1,28 +1,53 @@
 import { useQuery } from "@apollo/client";
 import { GET_CURRENT_ACTIVITIES2 } from "../../../gql/GET-CURRENT-ACTIVITIES";
-import { Chronometer } from "../cronometro/Chronometer";
+
 import { BoardSqueleton } from "../../squeletons/Welcome/boardSqueleton";
 import ProgressBar from "@ramonak/react-progress-bar";
+import { GetPrdCod } from "../../../utils/prdCod";
+
+import { usePerDataAct } from "../../../customHooks/usePerDataAct";
+import { Chronometer } from "../cronometro/Chronometer";
+
 
 export const BoardActivity = () => {
+
+  const PrdCod = GetPrdCod();
+  const { PerDataAct, loading: loadingEmployee, error: errorEmployee } = usePerDataAct(PrdCod);
+
+  //console.log("EMPLOYEEEE", PerDataAct);
+
+  // Acceder a BitCod y ActCod
+  const BitCod = PerDataAct?.BitCod ?? 1
+  const ActCod = PerDataAct?.ActCod ?? 1
+
+  // console.log("BitCod:", BitCod);
+  // console.log("ActCod:", ActCod);
+
 
     const { data, loading, error } = useQuery(GET_CURRENT_ACTIVITIES2, {
         variables : { 
          where: {
            activityCode: {
-            _eq:1
+            _eq: ActCod 
            },
            bitCode: {
-          _eq: 831316
+          _eq: BitCod 
            },
            
-       }}});
+       }},
+       fetchPolicy: 'no-cache', 
+      });
        
-     
+        
          if (loading) return <BoardSqueleton/>;
          if (error) return <p>Error: {error.message}</p>;
        
-         const activities = data?.getCurrentActivities[0]
+         const activities = data?.getCurrentActivities[0] ?? []
+
+         //console.log("DATA", data)
+
+        //console.log("ACTIVITIES", activities)
+
 
   return (
     <div className=" bg-white">
@@ -33,11 +58,12 @@ export const BoardActivity = () => {
             {" "}
             Estoy trabajando en...
           </p>
-
-          <div className=" flex justify-self-end ">  
-              <Chronometer/>
-          </div>
-        </div>
+          {activities && (
+              <div className="flex justify-self-end">
+                <Chronometer />
+              </div>
+            )}
+        </div> 
       </div>
 
       <div className=" border-l-6 border-t-1 border-b-1 border-r-1 border-cyan1 rounded-5 ml-10 mt-10 mr-10">
@@ -66,8 +92,7 @@ export const BoardActivity = () => {
                 Tiempo Restante:
               </div>
               <div className="font-trebuchet  text-16 text-gray1">
-            {activities.remainingTime}
-                
+                {activities.remainingTime} 
               </div>
             </div>
             <div>
@@ -94,14 +119,14 @@ export const BoardActivity = () => {
             Cliente{" "}
           </div>
           <div className=" font-roboto text-14 text-gray1 whitespace-nowrap overflow-hidden">
-            {activities.clientName}
+            {activities.clientName} 
           </div>
         </div>
 
         <div className="  ml-10 mr-10  mb-10 ">
           <div className=" font-trebuchet text-14 text-gray2">Asunto:</div>
           <div className=" font-roboto text-14 text-gray1 whitespace-nowrap overflow-hidden">
-          {activities.description}
+            {activities.description} 
           </div>
           <div className="  ">
           <ProgressBar

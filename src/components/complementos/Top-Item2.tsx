@@ -8,6 +8,7 @@ import { UserRed } from "../../svg/usersRanking/userRed";
 import { useRankingQuery } from "../../customHooks/useRankingQuery";
 import { CardsSqueleton } from "../squeletons/Ranking/CardsSqueleton";
 import { getDecodedToken } from "../../utils/token";
+import { GetPrdCod } from "../../utils/prdCod";
 
 interface RankingData {
   PerCod: number;
@@ -114,6 +115,8 @@ const TopItem2: React.FC<TopItemProps> = ({index,  rankingData }) => (
   </div>
 );
 
+const PrdCod = GetPrdCod();
+
 const RankingComponent2: React.FC = () => {
   const { data, loading, error } = useRankingQuery(9); // Usar el hook con el prdCod necesario
 
@@ -128,14 +131,16 @@ const RankingComponent2: React.FC = () => {
   
   const decodedToken = getDecodedToken();
   const userName = decodedToken ? decodedToken.userLongName : "Usuario"
-  
   const nombreFiltrar = userName;
-  const personaEspecifica = data.ranking.find((item: RankingData) => item.nombre === nombreFiltrar);
+
+  const targetIndex = data.ranking.findIndex((item: RankingData) => item.nombre === nombreFiltrar);
+  const targetItem = targetIndex !== -1 ? data.ranking[targetIndex] : null;
 
 
+ 
   return (
     <div>
-      {personaEspecifica && <TopItem2 index={0} rankingData={personaEspecifica} />}
+      {targetItem && <TopItem2 index={targetIndex} rankingData={targetItem} />}
     </div>
   );
 };

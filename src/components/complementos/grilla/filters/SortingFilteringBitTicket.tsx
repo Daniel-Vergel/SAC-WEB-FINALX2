@@ -2,24 +2,40 @@ import { useEffect, useRef, useState } from "react";
 import { PiSortDescending } from "react-icons/pi";
 import { PiSortAscendingLight } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../../store/store";
+import { setSelectedDescription } from "../../../../store/grillaState.tsx/SelectedDescription";
+import { setSelectedBitTicket } from "../../../../store/grillaState.tsx/SelectedBitTicket";
+import { useDebounce } from "../../../../utils/useDebounce";
 
-import { RootState } from "../../../store/store";
-import { setInputValue } from "../../../store/inputValue/valueState";
+interface SortingFilteringBoxProps {
+  requestSort: (key: string, direction: 'asc' | 'desc') => void;
+}
 
-const SortingFilteringBox = () => {
-  const { inputValue } = useSelector((state: RootState) => state.valueState);
-
-  const dispatch = useDispatch();
-
+const SortingFilteringBitTicket: React.FC<SortingFilteringBoxProps> = ({ requestSort }) => {
+  const dispatch = useDispatch(); 
+  const { bitTicketState } = useSelector((state: RootState) => state.bitTicketState);
   const [isOpen, setIsOpen] = useState(false);
-
   const sortingFilteringRef = useRef(null);
+  const [direction, setDirection] = useState<'asc' | 'desc'>('asc');
+
+  const [inputFocused, setInputFocused] = useState(false);
+  const [inputValue, setInputValue] = useState(bitTicketState);
+  const debouncedClientName = useDebounce(inputValue, 1000);
+
+  useEffect(() => {
+    dispatch(setSelectedBitTicket(debouncedClientName));
+  }, [debouncedClientName, dispatch]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value =
-      e.target.type === "number" ? parseFloat(e.target.value) : e.target.value;
-    dispatch(setInputValue(value));
+    const value = e.target.type === "number" ? parseFloat(e.target.value) : e.target.value;
+    setInputValue(value);
   };
+
+  const handleSortBy = (direction: 'asc' | 'desc') => {
+    setDirection(direction);
+    requestSort('bitTicket', direction);
+  };
+
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -27,7 +43,7 @@ const SortingFilteringBox = () => {
         sortingFilteringRef.current &&
         !(sortingFilteringRef.current as HTMLElement).contains(
           event.target as Node
-        )
+        ) && !inputFocused
       ) {
         setIsOpen(false);
       }
@@ -37,17 +53,18 @@ const SortingFilteringBox = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [inputFocused]);
 
   const toggleBox = () => {
     setIsOpen(!isOpen);
   };
 
   return (
-    <div className=" " ref={sortingFilteringRef}>
+    <div className=" relative " ref={sortingFilteringRef}>
       <button onClick={toggleBox} className=" text-black  ">
+        <div >
         <svg
-          className="mt-5 ml-16"
+          className={`mt-5 ml-16  rounded-4 transform ${direction === 'desc' ? 'rotate-180' : ''}`}
           width="20"
           height="20"
           viewBox="0 0 20 20"
@@ -67,6 +84,7 @@ const SortingFilteringBox = () => {
             fill="#4B4B4B"
           />
         </svg>
+        </div>
       </button>
 
       {isOpen && (
@@ -77,14 +95,14 @@ const SortingFilteringBox = () => {
             </h2>
             <div className="flex flex-col font-worksans text-14 mt-2">
               <button
-                //onClick={() => handleSortBy("asc")}
+                onClick={() => handleSortBy("asc")}
                 className="px-3 py-1 rounded flex justify-start text-gray2 hover:bg-gray-200"
               >
                 <PiSortDescending className=" mt-4 mr-10 text-black " />
                 Orden ascendente
               </button>
               <button
-                //onClick={() => handleSortBy("desc")}
+                onClick={() => handleSortBy("desc")}
                 className="px-3 py-1 rounded flex justify-start text-gray2 hover:bg-gray-200"
               >
                 <PiSortAscendingLight className=" mt-4 mr-10 text-black " />
@@ -100,6 +118,8 @@ const SortingFilteringBox = () => {
               type="text"
               value={inputValue}
               onChange={handleChange}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setInputFocused(false)}
               className="mt-2 mb-2  px-3 py-2 border border-gray-300 rounded"
               placeholder="Cualquier cosa..."
             />
@@ -110,4 +130,4 @@ const SortingFilteringBox = () => {
   );
 };
 
-export default SortingFilteringBox;
+export default SortingFilteringBitTicket;

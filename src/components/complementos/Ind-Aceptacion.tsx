@@ -44,13 +44,14 @@ export const IndAceptacion = () => {
         FecFin: fechaFinal
       },
     },
+    fetchPolicy: 'no-cache', 
   });
   //console.log("ACEPTACION", data)
 
   if (loading) return <AceptacionSqueleton/>;
   if (error) return <p>Error: {error.message}</p>;
 
-  const activityData = data?.getActivityRejectByDates[0];
+  const activityData = data?.getActivityRejectByDates[0] ?? [];
 
 const data01 = [
   {

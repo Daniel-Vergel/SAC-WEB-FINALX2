@@ -19,9 +19,10 @@ export const Bienvenido = () => {
 
     const decodedToken2 = getDecodedToken();
     const userName = decodedToken2 ? decodedToken2.userLongName : "Usuario"
+    console.log("USERNAME", userName)
     
     const nombreFiltrar = userName;
-    const personaEspecifica = data.ranking.find((item: RankingData) => item.nombre === nombreFiltrar);
+    const personaEspecifica = data.ranking.find((item: RankingData) => item.nombre === nombreFiltrar) ?? [];
 
     const decodedToken = getDecodedToken();
 

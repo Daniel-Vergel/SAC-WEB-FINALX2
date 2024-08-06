@@ -3,6 +3,9 @@ import { Print } from "./iconos.jsx/Print";
 import { Grilla } from "./complementos/grilla/Grilla";
 import { CardsActivitys } from "./complementos/cardsActivitys";
 import { CardsActivitys2 } from "./complementos/cardsActivitys2";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleState } from "../store/grillaState.tsx/SelectedStates";
+import { RootState } from "../store/store";
 
 const optionsList = [
   { value: "listado 1", label: "Listado 1" },
@@ -11,6 +14,16 @@ const optionsList = [
 ];
 
 export const ActividadesDeHoy = () => {
+
+  const dispatch = useDispatch();
+  const selectedStates = useSelector((state: RootState) => state.selectedStates.value);
+  
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    dispatch(toggleState(value));
+  };
+
+  const isChecked = selectedStates.includes('RESUELTA');
 
   return (
     <div className=" grid border-1 border-gray3 rounded-10">
@@ -28,7 +41,11 @@ export const ActividadesDeHoy = () => {
             <input
               type="checkbox"
               id="mostrarActividades"
+              value={'RESUELTA'}
+              checked={isChecked}
+              onChange={handleCheckboxChange}
               className=" w-20 h-20 mr-7 border-2 border-cyan1"
+
             />
             <label
               htmlFor="mostrarActividades"
